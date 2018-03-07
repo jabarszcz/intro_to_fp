@@ -18,13 +18,75 @@ It is a programming paradigm where...
 ## Concepts of FP
 
 ---
-### First-class and higher-order functions
+### First-Class and Higher-Order Functions
+
+Essentially:
+
+- Functions can be passed as arguments and also as return values.
+- There are generic functions that take other functions as arguments.
+
++++
+
+#### First-Class and Higher-Order Function: A Haskell Example
+
+```
+> (\x -> x + 1) 2
+3
+> :t (\x -> x + 1)
+(\x -> x + 1) :: Num a => a -> a
+> filter even [1..10]
+[2,4,6,8,10]
+> :t filter
+filter :: (a -> Bool) -> [a] -> [a]
+> :t even
+even :: Integral a => a -> Bool
+```
+@[1-4]
+@[5-10]
+
+- Other higher-order functions: `map`, `filter`, `fold`, `(.)`, `($)`,
+`flip`, `curry`, `uncurry` ...
+
+Note:
+Currying of *filter* on the next slide.
 
 ---
 ### Currying
 
+- Currying allows for a nicer, uncluttered syntax
+- We work with functions taking only one argument
+- For multiple args, we return a function that consumes the next argument
+- Currying is used in Haskell but not in Erlang
+
++++
+#### Currying : A Haskell Example
+
+```
+> let foo arg1 arg2 = arg1 + arg2
+> :t foo
+foo :: Num a => a -> a -> a
+> foo 1 2
+3
+> (foo 1) 2
+3
+> (uncurry foo) (1, 2)
+3
+> :t curry
+curry :: ((a, b) -> c) -> a -> b -> c
+> :t uncurry
+uncurry :: (a -> b -> c) -> (a, b) -> c
+> map (foo 2) [1..3]
+[3,4,5]
+```
+@[1-7]
+@[8-9]
+@[10-13]
+@[14-15]
+
 ---
-### Pattern matching
+### Pattern matching (and Sum Types)
+
+
 
 ---
 ### Pure functions / referential transparency
