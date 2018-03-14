@@ -167,6 +167,8 @@ countTrue :: Num a => [Bool] -> a
 2
 > foldl (\x y -> x + if y then 1 else 0) 0 $ map even [1..7]
 3
+> :t foldl
+foldl :: Foldable t => (b -> a -> b) -> b -> t a -> b
 ```
 
 ---
