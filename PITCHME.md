@@ -27,6 +27,10 @@ It is a programming paradigm where...
 ---
 ## Concepts of FP
 
+Let's look at the common features found in FP languages.
+
+The examples will be in Haskell and I'll explain the syntax as we go. Do not hesitate to ask questions if anything is unclear.
+
 ---
 ### First-Class and Higher-Order Functions
 
@@ -132,7 +136,7 @@ bar :: Num a => Tree a -> a
 
 > An expression is said to be referentially transparent if it can be
 > replaced with its corresponding value without changing the program's
-> behavior. -- [[wiki]](https://en.wikipedia.org/wiki/Referential_transparency)
+> behavior. [[wiki]](https://en.wikipedia.org/wiki/Referential_transparency)
 
 - Variables can only be assigned once
 - Side effects are not allowed in pure functions
@@ -158,8 +162,7 @@ countTrue :: Num a => [Bool] -> a
 3
 ```
 
----
-
++++
 - Higher-order functions are often a more idiomatic alternative
 
 ```
@@ -189,7 +192,7 @@ foldl :: Foldable t => (b -> a -> b) -> b -> t a -> b
 [1,2,3,4,5,6,7,8,9,10]
 ```
 
----
++++
 #### Cons of laziness
 
 - It is harder to reason about the cost of expressions
@@ -215,11 +218,13 @@ foldl :: Foldable t => (b -> a -> b) -> b -> t a -> b
 - The trick is to share history
 - Ex. : Singly linked lists have a persistent implementation
 
++++
+
 ```
 > let aList = [1,2,3]
 > let modifiedList = (4 : tail aList)
 > show modifiedList
-"[5,2,3]"
+"[4,2,3]"
 ```
 
 ```
@@ -228,7 +233,6 @@ foldl :: Foldable t => (b -> a -> b) -> b -> t a -> b
      |
      4
 ```
-
 
 +++
 ### Persistent Data Structures - List Zipper Example
@@ -246,6 +250,9 @@ foldl :: Foldable t => (b -> a -> b) -> b -> t a -> b
 |     listZipperFromList [] = Empty
 |     listZipperFromList (l:ls) = ListZipper [] l ls
 | :}
+```
++++
+```
 > let lz = listZipperFromList [1..3]
 > show lz
 "ListZipper [] 1 [2,3]"
@@ -301,9 +308,9 @@ foldl :: Foldable t => (b -> a -> b) -> b -> t a -> b
 +++
 ### Haskell Resources
 
-- (Hoogle)[https://www.haskell.org/hoogle/]
-- (_A Gentle Introduction To Haskell_)[https://www.haskell.org/tutorial/]
-- The book (_Learn You a Haskell for Great Good!_)[http://learnyouahaskell.com/]
+- [Hoogle](https://www.haskell.org/hoogle/)
+- [_A Gentle Introduction To Haskell_](https://www.haskell.org/tutorial/)
+- The book [_Learn You a Haskell for Great Good!_](http://learnyouahaskell.com/)
 
 ---
 ## Overview of Erlang
