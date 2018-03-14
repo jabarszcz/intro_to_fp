@@ -63,11 +63,10 @@ Currying of *filter* on the next slide.
 ---
 ### Currying
 
-- Currying allows for a nicer, uncluttered syntax
-- We work with functions taking only one argument
-- For multiple args, we return a function that consumes the next
-  argument
-- Currying is used in Haskell but not in Erlang
+- In Haskell, we generally work with unary functions
+- In order to handle multiple arguments, we return a function that
+  consumes the next argument
+- Currying allows for a nicer, uncluttered code, and eases composition
 
 +++
 #### Currying : A Haskell Example
