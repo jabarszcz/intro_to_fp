@@ -29,19 +29,71 @@ It is a programming paradigm where...
 
 Let's look at the common features found in FP languages.
 
-The examples will be in Haskell and I'll explain the syntax as we go. Do not hesitate to ask questions if anything is unclear.
+The examples will be in Haskell and I will explain the syntax as we
+go.
+
+Do not hesitate to ask questions if anything is unclear.
+
+---
+### Type System
+
+- Haskell and some other FP languages use the Hindley-Milner type
+  system.
+
+- It is able to deduce the most general type of an expression without
+  explicit annotations.
+
+- Types can be polymorphic (Ex.: `[a]` = a list of anything,
+  `[String]` = a list of strings, `[Int]` = a list of ints)
+
+- Types can be constrained (Ex.: `(Num a) => a` is any type that has
+  `(+)`, `(-)`, etc.)
+
++++
+#### Type System : Example
+
+```
+> :t "Hello"
+"Hello" :: [Char]
+> :t 12
+12 :: Num a => a
+> :t (12 :: Int)
+(12 :: Int) :: Int
+> data MyPair a = MakePair a a
+> :t MakePair "hello" "world"
+MakePair "hello" "world" :: MyPair [Char]
+```
+@[1-2]
+@[3-6]
+@[7-9]
+
++++
+#### Type System : Typed Hole Example
+
+```
+> _what_goes_here + (5 :: Int)
+
+<interactive>:30:1:
+    Found hole ‘_what_goes_here’ with type: Int
+    Relevant bindings include it :: Int (bound at <interactive>:30:1)
+    In the first argument of ‘(+)’, namely ‘_what_goes_here’
+    In the expression: _what_goes_here + (5 :: Int)
+    In an equation for ‘it’: it = _what_goes_here + (5 :: Int)
+```
 
 ---
 ### First-Class and Higher-Order Functions
 
 Essentially:
 
-- Functions can be passed as arguments and also as return values.
-- There are generic functions that take other functions as arguments.
+- Functions are first-class values, as they can be passed as arguments
+  and as return values.
+
+- There are higher-order functions that take other functions as
+  arguments.
 
 +++
-
-#### First-Class and Higher-Order Function: A Haskell Example
+#### First-Class and Higher-Order Functions: Example
 
 ```
 > (\x -> x + 1) 2
@@ -67,13 +119,15 @@ Currying of *filter* on the next slide.
 ---
 ### Currying
 
-- In Haskell, we generally work with unary functions
+- In Haskell, we generally work with unary functions.
+
 - In order to handle multiple arguments, we return a function that
-  consumes the next argument
-- Currying allows for a nicer, uncluttered code, and eases composition
+  consumes the next argument.
+
+- Currying makes composition simpler, allowing for nicer code.
 
 +++
-#### Currying : A Haskell Example
+#### Currying : Example
 
 ```
 > let foo arg1 arg2 = arg1 + arg2
@@ -100,15 +154,38 @@ uncurry :: (a -> b -> c) -> (a, b) -> c
 ---
 ### Sum Types
 
-- Languages like C++ have product types with `struct`s (multiple parts
-  at the same time)
-- Sum types allow for alternation (one part of many) in data structure
-  definitions
+- They complement product types (aggregation of multiple values
+  together like our `MyPair`)
+
+- One of the values is allowed at a time, and we know which one is in
+  use.
+
 - Similar to C++ unions + a tag
 
++++
+#### Sum Types : Example
+
+- Haskell :
+
 ```
-> data Tree a = Empty | Branch (Tree a) a (Tree a) deriving (Show, Eq, Ord)
+> data Tree a = Empty | Branch (Tree a) a (Tree a) deriving (Show)
 > let tree = Branch (Branch Empty 15 Empty) 34 Empty :: Tree Int
+```
+- C++ equivalent :
+
+```
+enum TreeKind { Empty, Branch };
+
+struct Tree {
+    enum TreeKind kind;
+    union {
+        struct {
+            int value;
+            struct Tree *left, *right;
+        };                    /* Branch */
+        struct { };           /* Empty */
+    };
+};
 ```
 
 ---
@@ -118,7 +195,8 @@ uncurry :: (a -> b -> c) -> (a, b) -> c
 
 ```
 > :{
-| let bar (Branch left elem right) = elem + bar left + bar right
+| let bar (Branch left elem right) =
+|             elem + bar left + bar right
 |     bar Empty = 0
 | :}
 > :t bar
@@ -128,8 +206,8 @@ bar :: Num a => Tree a -> a
 > bar tree
 49
 ```
-@[1-6]
-@[7-10]
+@[1-7]
+@[8-11]
 
 ---
 ### Pure functions / referential transparency
@@ -138,9 +216,9 @@ bar :: Num a => Tree a -> a
 > replaced with its corresponding value without changing the program's
 > behavior. [[wiki]](https://en.wikipedia.org/wiki/Referential_transparency)
 
-- Variables can only be assigned once
-- Side effects are not allowed in pure functions
-- Makes it easier to reason about programs
+- Variables can only be assigned once.
+- Side effects are not allowed in pure functions.
+- Makes it easier to reason about programs.
 
 ---
 ### Recursion instead of looping constructs
@@ -172,14 +250,17 @@ countTrue :: Num a => [Bool] -> a
 3
 > :t foldl
 foldl :: Foldable t => (b -> a -> b) -> b -> t a -> b
+> let countTrue2 = foldl (\x y -> x + if y then 1 else 0) 0
+> :t countTrue2
+countTrue2 :: (Num b, Foldable t) => t Bool -> b
 ```
 
 ---
 ### Laziness (Evaluation Strategy)
 
-- Some FP languages are "lazy"
-- Evaluation of terms is done only when needed
-- This makes "infinite" structures possible
+- Some FP languages, like Haskell, are "lazy".
+- Evaluation of terms is done only when needed.
+- This makes "infinite" structures possible.
 
 ```
 > let list1 = [1..]
@@ -195,28 +276,54 @@ foldl :: Foldable t => (b -> a -> b) -> b -> t a -> b
 +++
 #### Cons of laziness
 
-- It is harder to reason about the cost of expressions
-- Exceptions happen when the terms are evaluated, not necessarily
-  where you expect
+- It is harder to reason about the cost of expressions.
 
----
-### Type System
+- Exceptions happen when the terms are evaluated, not necessarily
+  where you expect.
+
+- Lazy IO can cause problems (the GC controls when the files are
+  closed, so you can run out of FDs).
+
++++
+#### Laziness and Exceptions Example
+
+```
+> undefined
+*** Exception: Prelude.undefined
+> :t undefined
+undefined :: t
+> head []
+*** Exception: Prelude.head: empty list
+> ["hello", undefined, head []]
+["hello","*** Exception: Prelude.undefined
+> take 1 $ ["hello", undefined, head []]
+["hello"]
+> drop 2 $ ["hello", undefined, head []]
+["*** Exception: Prelude.head: empty list
+```
+@[1-4]
+@[5-6]
+@[7-8]
+@[9-10]
+@[11-12]
 
 ---
 ### Persistent Data Structures - The Problem of Immutability
 
 - Remember that we cannot directly mutate variables (or data
-  structures for that matter)
+  structures for that matter).
+
 - It seems that we have to make a deep copy of a data structure for
-  every small mutation
-- The solution is to use persistent data structures
+  every small mutation.
+
+- The solution is to use persistent data structures.
 
 +++
 ### Persistent Data Structures - The Solution
 
-- Persistent data structures preserve their previous versions
-- The trick is to share history
-- Ex. : Singly linked lists have a persistent implementation
+- Persistent data structures preserve their previous versions.
+- The trick is to share history.
+- Ex. : Singly linked lists have a persistent implementation.
 
 +++
 
@@ -238,7 +345,7 @@ foldl :: Foldable t => (b -> a -> b) -> b -> t a -> b
 ### Persistent Data Structures - List Zipper Example
 
 - Zippers are persistent data structures that combine a container and
-  a location
+  a location.
 
 ```
 > data ListZipper a = Empty | ListZipper [a] a [a] deriving (Show)
@@ -272,26 +379,26 @@ foldl :: Foldable t => (b -> a -> b) -> b -> t a -> b
 +++
 ### Persistent Data Structures - Queue Example
 
+See example module ...
 
 ---
 ## More on Haskell
 
-+++
-### What do we already know about Haskell?
-
-- How to define functions and lambdas
-- How to define parametric datatypes (parametric polymorphism -- one
-  implementation for all types)
-- ...
-
-### What else do we need?
-
-- Type Classes for ad-hoc polymorphism (different implementations for
-  different types)
-- A way to make effectful computations (IO monad)
+- Type constraints
+- Monads and effectful computations
 
 +++
 ### Types and Typeclasses
+
+- We have seen parametric polymorphism with `MyPair a` (one
+  implementation for all types).
+
+- We can also do ad-hoc polymorphism with **Typeclasses** (different
+  implementations for every type instance)
+
+```
+
+```
 
 +++
 ### Functor Class
@@ -336,8 +443,8 @@ foldl :: Foldable t => (b -> a -> b) -> b -> t a -> b
 +++
 ### Erlang resources
 
-- The book [_Learn You Some Erlang for great good!_](http://learnyousomeerlang.com/)
-  is a nice intro
+- The book [_Learn You Some Erlang for great
+  good!_](http://learnyousomeerlang.com/) is a nice intro
 
 ---
 ## Questions ?
