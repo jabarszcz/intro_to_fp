@@ -1,0 +1,19 @@
+code {
+    counter-reset: lineno;
+}
+
+code span.line::before {
+        counter-increment: lineno;
+        content: counter(lineno);
+        display: inline-block;
+        padding: 0 .5em;
+        border-right: 1px solid #666;
+        width: 1.5em;
+        text-align: right;
+        margin-right: 0.5em;
+        color: #666;
+}
+
+pre {
+    width: 100%;
+}
