@@ -396,21 +396,115 @@ See example module ...
 - We can also do ad-hoc polymorphism with **Typeclasses** (different
   implementations for every type instance)
 
-```
+- (See `Typeclasses.hs`)
 
-```
++++
+### Functors, Applicative Functors and Monads
+
+- Those are three classes of objects that are often encountered in
+  Haskell.
+
+- A monad is always an applicative functor.
+
+- An applicative functor is always a functor.
+
+- They add a "context" for computation.
+
+- [Pretty pictures](http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html)
++++
+### Data types that are Monads (and Applicative Functors)
+
+- `data Maybe a = Nothing | Just a`
+
+- `data Either a b = Left a | Right b` where `Left` is the error case
+  and `Right` the normal result
+
+- `[]`, the list type
+
+- Also :`IO a`, `ST s a`, etc.
 
 +++
 ### Functor Class
 
+```
+class  Functor f  where
+    fmap        :: (a -> b) -> f a -> f b
+    -- ...
+
+    -- Functor Laws:
+    --  fmap id  ==  id
+    --  fmap (f . g)  ==  fmap f . fmap g
+```
+
+- [Documentation](http://hackage.haskell.org/package/base-4.11.0.0/docs/Prelude.html#t:Functor)
+
++++
+### Functor Examples
+
 +++
 ### Applicative Functor Class
+
+```
+class Functor f => Applicative f where
+    -- | Lift a value.
+    pure :: a -> f a
+
+    -- | Sequential application.
+    --
+    -- A few functors support an implementation of '<*>' that is more
+    -- efficient than the default one.
+    (<*>) :: f (a -> b) -> f a -> f b
+    (<*>) = liftA2 id
+
+    -- ...
+```
++++
+```
+    -- Applicative Functor Laws:
+    --  - identity
+    --      pure id <*> v = v
+    --  - composition
+    --      pure (.) <*> u <*> v <*> w = u <*> (v <*> w)
+    --  - homomorphism
+    --      pure f <*> pure x = pure (f x)
+    --  - interchange
+    --      u <*> pure y = pure ($ y) <*> u
+```
 
 +++
 ### Monad Class
 
+```
+class Applicative m => Monad m where
+    -- | Sequentially compose two actions, passing any value produced
+    -- by the first as an argument to the second.
+    (>>=)       :: forall a b. m a -> (a -> m b) -> m b
+
+    -- | Sequentially compose two actions, discarding any value produced
+    -- by the first, like sequencing operators (such as the semicolon)
+    -- in imperative languages.
+    (>>)        :: forall a b. m a -> m b -> m b
+    m >> k = m >>= \_ -> k
+
+    -- | Inject a value into the monadic type.
+    return      :: a -> m a
+    return      = pure
+
+    -- ...
+```
++++
+
+```
+    -- Monad Laws
+    --  return a >>= k  =  k a
+    --  m >>= return  =  m
+    --  m >>= (\x -> k x >>= h)  =  (m >>= k) >>= h
+```
+
 +++
 ### The IO Monad
+
+
 
 +++
 ### Haskell Resources
