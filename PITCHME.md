@@ -456,17 +456,16 @@ class Functor f => Applicative f where
     -- ...
 ```
 +++
-```
-    -- Applicative Functor Laws:
-    --  - identity
-    --      pure id <*> v = v
-    --  - composition
-    --      pure (.) <*> u <*> v <*> w = u <*> (v <*> w)
-    --  - homomorphism
-    --      pure f <*> pure x = pure (f x)
-    --  - interchange
-    --      u <*> pure y = pure ($ y) <*> u
-```
+
+Applicative Functor Laws:
+- identity
+    `pure id <*> v = v`
+- composition
+    `pure (.) <*> u <*> v <*> w = u <*> (v <*> w)`
+- homomorphism
+    `pure f <*> pure x = pure (f x)`
+- interchange
+    `u <*> pure y = pure ($ y) <*> u`
 
 +++
 ### Monad Class
@@ -491,12 +490,12 @@ class Applicative m => Monad m where
 ```
 +++
 
-```
-    -- Monad Laws
-    --  return a >>= k  =  k a
-    --  m >>= return  =  m
-    --  m >>= (\x -> k x >>= h)  =  (m >>= k) >>= h
-```
+
+Monad Laws
+
+- `return a >>= k  =  k a`
+- `m >>= return  =  m`
+- `m >>= (\x -> k x >>= h)  =  (m >>= k) >>= h`
 
 +++
 ### The IO Monad
