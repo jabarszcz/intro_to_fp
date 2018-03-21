@@ -1,6 +1,6 @@
 # Introduction to functional programming
 
-Functional programming concepts and examples in Haskell (and Erlang)
+Functional programming concepts and examples in Haskell
 
 ---
 ## What is Functional Programming (FP) ?
@@ -157,8 +157,8 @@ uncurry :: (a -> b -> c) -> (a, b) -> c
 - They complement product types (aggregation of multiple values
   together like our `MyPair`)
 
-- One of the values is allowed at a time, and we know which one is in
-  use.
+- With sum types, one of the values is allowed at a time, and we know
+  which one is in use.
 
 - Similar to C++ unions + a tag
 
@@ -398,7 +398,7 @@ See example module ...
 
 - (See `Typeclasses.hs`)
 
-+++
+---
 ### Functors, Applicative Functors and Monads
 
 - Those are three classes of objects that are often encountered in
@@ -437,9 +437,6 @@ class  Functor f  where
 ```
 
 - [Documentation](http://hackage.haskell.org/package/base-4.11.0.0/docs/Prelude.html#t:Functor)
-
-+++
-### Functor Examples
 
 +++
 ### Applicative Functor Class
@@ -504,41 +501,21 @@ class Applicative m => Monad m where
 +++
 ### The IO Monad
 
+- Often, monads have a way to extract the value from the context (ex.:
+  pattern match or `fromJust`).
 
+- IO values are stuck in the IO monad (unless you use
+  `unsafePerformIO`)
 
-+++
+- This makes a clear separation between pure and effectful
+  computations.
+
+---
 ### Haskell Resources
 
 - [Hoogle](https://www.haskell.org/hoogle/)
 - [_A Gentle Introduction To Haskell_](https://www.haskell.org/tutorial/)
 - The book [_Learn You a Haskell for Great Good!_](http://learnyouahaskell.com/)
-
----
-## Overview of Erlang
-
-- Not pure (stateful processes), but single assignement
-- Strict evaluation strategy
-- Dynamically typed
-- Garbage-Collected
-
-+++
-### Erlang syntax basics
-
-+++
-### Example of a stateful process: the digraph server
-
-+++
-### Cool and advanced features of Erlang
-
-- Built-in concurrency features like message-passing and supervision
-  trees ease the writing of fault-tolerant software.
-- It is possible to hot swap code!
-
-+++
-### Erlang resources
-
-- The book [_Learn You Some Erlang for great
-  good!_](http://learnyousomeerlang.com/) is a nice intro
 
 ---
 ## Questions ?
